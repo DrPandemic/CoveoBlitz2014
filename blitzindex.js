@@ -21,20 +21,17 @@ var server = ThriftShop.createServer(Indexer, {
     });
   },
   reset: function(result) {
+    console.log('reset');
     search.reset();
     result(null);
   },
   ping: function(result) {
-    console.log("ping");
+    console.log('ping');
     result(null);
   },
   query: function (query, result) {
-    var res = search.query(query) || { results: [], facets: [] };
-    for (var i in res.results) {
-      res.results[i] = new ttypes.QueryResult(res.results[i]);
-    }
-    var res = new ttypes.QueryResponse(res);
-    console.log(res);
+    var res = new ttypes.QueryResponse(search.query(query));
+    console.log(res.facets);
     result(null, res);
   }
 }, { transport : ttransport.TBufferedTransport });
