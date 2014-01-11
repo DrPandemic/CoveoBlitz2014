@@ -28,6 +28,7 @@ function Search() {
   this.docs = {};
   this.doc_ids = [];
   var self = this;
+  this.facets = {};
 
   this.index = function(doc, type, callback) {
     console.log('Indexing ' + doc.id + '.');
@@ -170,6 +171,7 @@ function Search() {
     this.dic = {};
     this.docs = {};
     this.doc_ids = [];
+    this.facets = {};
   }
 
   function extract_terms(str,callback) {
