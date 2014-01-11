@@ -66,11 +66,11 @@ function Search() {
       });
     }
 
-    /*_.each(get_fields(), function(field) {
-      if (doc[field]) {
+    _.each(get_fields(), function(field) {
+      if (doc[field]) { // 
         
       }
-    });*/
+    });
 
     save_doc(id, doc, type, doc_terms);
     if (callback) callback();
@@ -84,7 +84,11 @@ function Search() {
     var text = doc.text || '';
     _.each(get_fields(),
     function(field) {
-      if (doc[field]) text += ' ' + doc[field];
+      if (doc[field]) 
+        text += ' ' + 
+          _.isArray(doc[field]) ? 
+            _.reduce(doc[field], function(memo, f) { return memo + ' ' + f; }, '') : 
+            doc[field];
     });
     return text;
   }
