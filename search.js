@@ -67,18 +67,21 @@ function Search() {
     }
 
     _.each(get_fields(), function(field) {
-      var val = doc[field];
+      var val = (!doc[field] || _.isArray(doc[field])) ? doc[field] : [doc[field]];
       if (val) {
-        if (!self.facets[field]) { // first time we see this field
-          self.facets[field] = {};
-          self.facets[field][val] = {};
-          self.facets[field][val][id] = 1;
-        } else if (!self.facets[field][val]) { // first time we see this field value
-          self.facets[field][val] = {};
-          self.facets[field][val][id] = 1;
-        } else {
-          self.facets[field][val][id] = 1;
-        }
+        _.each(val, function(v) {
+          v = v.trim();
+          if (_.isUndefined(self.facets[field])) { // first time we see this field
+            self.facets[field] = {};
+            self.facets[field][v] = {};
+            self.facets[field][v][id] = true;
+          } else if (_.isUndefined(self.facets[field][v])) { // first time we see this field value
+            self.facets[field][v] = {};
+            self.facets[field][v][id] = true;
+          } else {
+            self.facets[field][v][id] = true;
+          }
+        });
       }
     });
 
