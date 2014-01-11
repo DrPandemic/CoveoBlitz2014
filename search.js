@@ -79,7 +79,7 @@ function Search() {
   }
 
   this.query = function(query) {
-    console.log('Query');
+    console.log('Query',query);
  
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
     var docs = filtered.docs;
