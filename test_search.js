@@ -26,7 +26,7 @@ function start_test() {
 
 function getInput(str) {
   str = str.replace(/\s+/g, '');
-  console.log('results',search.query(fakeQuery(str,1,[])));
+  console.log('results',search.query(fakeQueryMulty(str,1,[])));
 }
 
 function fakeAlbum(doc){
@@ -57,5 +57,7 @@ function fakeArtist(doc){
 }
 function fakeQuery(doc,id,facets){
   return {queryTreeNodes:[{value : doc/*,'OPERATOR',-1,-1,1*/}],rootID : id, facetFilters : facets};
-
+}
+function fakeQueryMulty(doc,id,facets) {
+  return {queryTreeNodes:[{value : 'chat',type : '2'/*,-1,-1,1*/},{value : 'chien',type : '2'}],rootID : id, facetFilters : facets};
 }
