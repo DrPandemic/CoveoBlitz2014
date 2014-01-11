@@ -61,7 +61,7 @@ function Search() {
     });
 
     save_doc(id, doc, doc_terms);
-    callback();
+    if (callback) callback();
   };
 
   var current_doc_id = 1;
@@ -82,7 +82,7 @@ function Search() {
   };
 
   function extract_terms(str,callback) {
-    callback(tokenizer.extract_terms(str));
+    if (callback) callback(tokenizer.extract_terms(str));
   }
 }
 
