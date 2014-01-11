@@ -11,16 +11,12 @@ var search = new Search();
 
 var server = ThriftShop.createServer(Indexer, {
   indexArtist: function (artist, result) {
-    var s = Date.now()
     search.index(artist, 1, function () {
-      console.log(Date.now() - s);
       result(null);
     });
   },
   indexAlbum: function (album, result) {
-    var s = Date.now()
     search.index(album, 2, function () {
-      console.log(Date.now() - s);
       result(null);
     });
   },
