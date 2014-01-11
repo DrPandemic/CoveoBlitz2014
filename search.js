@@ -87,7 +87,7 @@ function Search() {
     return _.map(docs, function(doc) {
       return {
         id: doc,
-        type: self.docs[doc].doc.type
+        documentType: self.docs[doc].doc.type
       }
     });
   };
