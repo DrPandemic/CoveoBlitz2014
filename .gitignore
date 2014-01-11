@@ -6,10 +6,21 @@ lib-cov
 *.out
 *.pid
 *.gz
+*.swp
+Thumbs.db
+.DS_Store
 
 pids
 logs
 results
 
 npm-debug.log
+
 node_modules
+
+*.sublime-*
+
+*.njsproj
+*.suo
+.idea
+*.sln
