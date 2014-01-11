@@ -38,11 +38,11 @@ var server = ThriftShop.createServer(Indexer, {
   },
   query: function (query, result) {
     // console.log(util.inspect(query, false, null));
-    //var s = Date.now();
+    // var s = Date.now();
     var res = new ttypes.QueryResponse(search.query(query));
-    //console.log(s);
+    // console.log(s);
     // console.log(util.inspect(search.dic, false, null));
-    //console.log(util.inspect(res, false, null));
+    // console.log(util.inspect(res.results, false, null));
     result(null, res);
   }
 }, { transport : ttransport.TBufferedTransport });

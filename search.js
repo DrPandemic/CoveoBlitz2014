@@ -47,18 +47,18 @@ function Search() {
               nb_docs: 1
             };
             self.dic[term].postings[id] = {
-              frequency: 1,
-              positions: [i]
+              frequency: 1//,
+              //positions: [i]
             };
           } else if (!self.dic[term].postings[id]) { // first time we see this term in this doc
             self.dic[term].postings[id] = {
-              frequency: 1,
-              positions: [i]
+              frequency: 1//,
+              //positions: [i]
             };
             self.dic[term].nb_docs++;
           } else {
             self.dic[term].postings[id].frequency++;
-            self.dic[term].postings[id].positions.push(i);
+            //self.dic[term].postings[id].positions.push(i);
           }
         });
 
@@ -67,11 +67,21 @@ function Search() {
     }
 
     _.each(get_fields(), function(field) {
-      if (!doc[field]) { // first time we see this field
-        filter[field] = {};
-        filter[field][id] = 1;
-      } else if (!doc[field][id]) {
-        filter[field][id] = 1;
+      var val = (!doc[field] || _.isArray(doc[field])) ? doc[field] : [doc[field]];
+      if (val) {
+        _.each(val, function(v) {
+          v = v.trim();
+          if (_.isUndefined(self.facets[field])) { // first time we see this field
+            self.facets[field] = {};
+            self.facets[field][v] = {};
+            self.facets[field][v][id] = true;
+          } else if (_.isUndefined(self.facets[field][v])) { // first time we see this field value
+            self.facets[field][v] = {};
+            self.facets[field][v][id] = true;
+          } else {
+            self.facets[field][v][id] = true;
+          }
+        });
       }
     });
 
@@ -87,11 +97,12 @@ function Search() {
     var text = doc.text || '';
     _.each(get_fields(),
     function(field) {
-      if (doc[field]) 
+      if (doc[field]) {
         text += ' ' + 
-          _.isArray(doc[field]) ? 
-            _.reduce(doc[field], function(memo, f) { return memo + ' ' + f; }, '') : 
-            doc[field];
+          (_.isArray(doc[field]) ?
+            _.reduce(doc[field], function(memo, f) { return memo + ' ' + f; }, '') :
+            doc[field]);
+      }
     });
     return text;
   }
@@ -111,10 +122,10 @@ function Search() {
     //console.log('Query',query);
 
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
-    filtered = facets_filter(filtered, query.facetFilters);
-    var mydocs = filtered.docs;
+    filtered = facets_filter(filtered.docs, query.facetFilters);
+    var mydocs = filtered;
 
-    mydocs = rank(mydocs);
+    mydocs.sort();
 
     return {
       results: _.map(mydocs, function(doc) {
@@ -191,6 +202,9 @@ function Search() {
 
   function extract_terms(str,callback) {
     if (callback) callback(tokenizer.extract_terms(str));
+    else {
+      return tokenizer.extract_terms(str);
+    }
   }
 
 
@@ -230,13 +244,21 @@ function Search() {
       } else {
         var queryTerms = [];
         for(var node in tree) {
-          //2 = literal
           var value = tree[node].value;
+          var termsS = extract_terms(value);
+          //2 = literal
           //////console.log(tree[node].type,self.dic[value]);
-          if(tree[node].type === '2' && self.dic[value]) {
+          if(tree[node].type === '2' && self.dic[value] && termsS.length === 1) {
             ////console.log('good');
             terms.push(value);
             docs.push(_.keys(self.dic[value].postings));
+          } else if (tree[node].type === '2') {
+            var docsw = _.map(termsS, function(t) {
+              return self.dic[t] ? _.keys(self.dic[t].postings) : [];
+            });
+            var potential = intersectLists(docsw);
+            return { docs: potential, terms: terms };
+            //self.dic[term].postings[idDoc].positions = array pas sorted
           }
         }
         docs = intersectLists(docs);
@@ -251,20 +273,24 @@ function Search() {
     _.each(docs, function(doc) {
       var keep = true;
       _.each(filters, function(filter) {
-        if (!self.facets[filter.metadataName]) keep = false;
+        if (!self.facets[filter.metadataName]) { keep = false;  }
         if (keep) {
           var filterok = false;
           _.each(filter.values, function(val) {
-            if (self.facets[filter.metadataName][val]) filterok = true;
+            if (self.facets[filter.metadataName][val] &&
+              self.facets[filter.metadataName][val][doc]) filterok = true;
           });
           if (!filterok) keep = false;
         }
       });
 
       if (keep) {
+        //console.log('yes');
         remaining.push(doc);
       }
     });
+
+    return remaining;
   }
 
   function intersectLists(lists) {

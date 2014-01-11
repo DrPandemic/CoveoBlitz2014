@@ -5,15 +5,19 @@
   'chat chat chat Explosion'
   , 'chien chien chat chien chien chien chien tentacules'
   , 'chien chat tentacules'
-  , 'Mais Jesse que devrions nous faire?'
+  , 'Mais Jesse que devrions nous faire?',
+      'chat',
+      'chien'
     ],
-  currentId = 1;
+  currentId = 0;
 
 start_test();
 
 function start_test() {
+  var names = ['rock', 'rock', 'test', '', '', ''];
+  var artists = [['bob'], ['bob', 'jon'], ['jack', 'salut'], [], [], []]
   for(var doc in docs) {
-    search.index(fakeAlbum(docs[doc]),'album',function() {
+    search.index(fakeAlbum(docs[doc], names[doc], artists[doc]),'album',function() {
       console.log('indexed');
     })
   }
@@ -26,17 +30,17 @@ function start_test() {
 
 function getInput(str) {
   str = str.replace(/\s+/g, '');
-  console.log('results',JSON.stringify(search.query(fakeQueryMulty(str,1,[]))));
+  console.log('results',JSON.stringify(search.query(fakeQueryMulty(str,1,[{metadataName:'artists', values:['bob']},{metadataName:'name', values:['test', 'rock']}]))));
 }
 
-function fakeAlbum(doc){
+function fakeAlbum(doc, name, artists){
   return {
     id:currentId++,
     text: doc,
-    name : '',
-    artists : [],
+    name : name,
+    artists : artists,
     release_date : '',
-    genres: [],
+    genres: ['rock'],
     track_names : []
   }
 }
