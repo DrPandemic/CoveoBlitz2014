@@ -82,7 +82,12 @@ function Search() {
     console.log('Query',query);
 
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
+<<<<<<< HEAD
     var mydocs = filtered.docs;
+=======
+    var docs = filtered.docs;
+    console.log(docs);
+>>>>>>> 4babfe1174dde352acedaf982aed88cbfc7f2661
 
     return _.map(mydocs, function(doc) {
       return {
@@ -103,16 +108,12 @@ function Search() {
     if (callback) callback(tokenizer.extract_terms(str));
   }
 
+
   function rank(query, docs) {
     var scores = [];
   }
 
-  /*
-  return :
-  [
-    id:The good documents
-  ]
-   */
+
   function filter(rootID,tree) {
     var terms = [];
     var docs = [];
@@ -120,10 +121,11 @@ function Search() {
     if (tag === '*') {
       docs = self.doc_ids;
     } else {
+
       if (self.dic[tag]) {
         terms.push(tag);
         docs.push(_.keys(self.dic[tag].postings));
-      } else {} //TODO: handle operators
+      } else {} //TODO: handle 
     }
 
     return { docs: _.flatten(docs), terms: terms };
