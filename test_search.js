@@ -26,7 +26,7 @@ function start_test() {
 
 function getInput(str) {
   str = str.replace(/\s+/g, '');
-  console.log('results',JSON.stringify(search.query(fakeQuery(str,1,[]))));
+  console.log('results',JSON.stringify(search.query(fakeQueryMulty(str,1,[]))));
 }
 
 function fakeAlbum(doc){
