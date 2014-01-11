@@ -143,7 +143,7 @@ function Search() {
       results.push(new ttypes.FacetResult({
         metadataName: meta,
         values: _.map(values, function(count, value) {
-          if (meta === 'type') value = (value === 1) ? 'artist' : 'album';
+          if (meta === 'type') value = (value == 1) ? 'artist' : 'album';
           return new ttypes.FacetValue({ value: value, count: count});
         })
       }));
