@@ -75,10 +75,10 @@ function Search() {
     self.doc_ids.push(id);
   }
 
-  this.query = function(rootId, query) {
+  this.query = function(query) {
     console.log('Query');
  
-    var docs = self.doc_ids; // TODO: filter
+    var docs = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
 
     return _.map(docs, function(doc) {
       return {
