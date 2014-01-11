@@ -24,7 +24,8 @@ function start_test() {
 }
 
 function getInput(str) {
-  search.query(1,fakeQuery('chat'))
+  str = str.replace(/\s+/g, '');
+  console.log('results',search.query(fakeQuery(str,1,[])));
 }
 
 function fakeAlbum(doc){
@@ -49,10 +50,7 @@ function fakeArtist(doc){
     instruments_played : []
   }
 }
-function fakeQuery(doc){
-  return [{value : doc/*,'OPERATOR',-1,-1,1*/}];
+function fakeQuery(doc,id,facets){
+  return {queryTreeNodes:[{value : doc/*,'OPERATOR',-1,-1,1*/}],rootID : id, facetFilters : facets};
 
 }
-search.index({id: 1, text: 'Test'}, 'album', function() {
-  console.log(search.query({ rootId: 1, queryTreeNodes: [['*']]}));
-});

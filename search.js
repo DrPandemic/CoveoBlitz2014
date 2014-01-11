@@ -106,6 +106,7 @@ function Search() {
     if (tag === '*') {
       return self.doc_ids;
     } else {
+      console.log('filter',self.dic[tag]);
       return self.dic[tag] ? _.keys(self.dic[tag].postings) : [];
     }
   }
