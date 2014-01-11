@@ -1,4 +1,5 @@
-var _ = require('underscore');
+var _ = require('underscore'),
+    tokenizer = require('./tokenizer.js');
 
 function Search() {
   this.dic = {};
@@ -18,7 +19,8 @@ function Search() {
     console.log('Query');
   };
 
-  function extract_terms() {
+  function extract_terms(str,callback) {
+    callback(tokenizer.extract_terms(str));
   }
 }
 
