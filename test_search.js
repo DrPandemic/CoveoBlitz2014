@@ -28,17 +28,17 @@ function start_test() {
 
 function getInput(str) {
   str = str.replace(/\s+/g, '');
-  console.log('results',JSON.stringify(search.query(fakeQueryMulty(str,1,[]))));
+  console.log('results',JSON.stringify(search.query(fakeQueryMulty(str,1,[{metadataName:'name', values:['rock']}]))));
 }
 
 function fakeAlbum(doc){
   return {
     id:currentId++,
     text: doc,
-    name : '',
+    name : 'rock',
     artists : [],
     release_date : '',
-    genres: [],
+    genres: ['rock'],
     track_names : []
   }
 }

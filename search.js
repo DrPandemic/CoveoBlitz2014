@@ -48,7 +48,7 @@ function Search() {
             };
             self.dic[term].postings[id] = {
               frequency: 1,
-              postitions: [i]
+              positions: [i]
             };
           } else if (!self.dic[term].postings[id]) { // first time we see this term in this doc
             self.dic[term].postings[id] = {
@@ -58,7 +58,7 @@ function Search() {
             self.dic[term].nb_docs++;
           } else {
             self.dic[term].postings[id].frequency++;
-            this.dic[term].postings[id].positions.push(i);
+            self.dic[term].postings[id].positions.push(i);
           }
         });
 
@@ -67,10 +67,10 @@ function Search() {
     }
 
     _.each(get_fields(), function(field) {
-      if (!doc[field]) { // first time we see this field
+      if (!self.facets[field]) { // first time we see this field
         filter[field] = {};
         filter[field][id] = 1;
-      } else if (!doc[field][id]) {
+      } else if (!self.facets[field][id]) {
         filter[field][id] = 1;
       }
     });
@@ -111,7 +111,7 @@ function Search() {
     //console.log('Query',query);
 
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
-    filtered = facets_filter(filtered, query.facetFilters);
+    //filtered = facets_filter(filtered.docs, query.facetFilters);
     var mydocs = filtered.docs;
 
     mydocs.sort();
@@ -276,6 +276,8 @@ function Search() {
         remaining.push(doc);
       }
     });
+
+    return remaining;
   }
 
   function intersectLists(lists) {
