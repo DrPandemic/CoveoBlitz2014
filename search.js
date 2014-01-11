@@ -124,7 +124,7 @@ function Search() {
         if (value) {
           var values = _.isArray(value) ? _.flatten(value) : [value];
           _.each(values, function(val) {
-            val = val.trim();
+            if (_.isString(val)) val = val.trim();
             if (!facets[field]) { // first time we see this metadata
               facets[field] = {};
               facets[field][val] = 1;
