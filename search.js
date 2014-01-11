@@ -178,7 +178,7 @@ function Search() {
       if (self.dic[tag]) {
         terms.push(tag);
         docs = docs.concat(docs, _.keys(self.dic[tag].postings));
-      } else {} //TODO: handle 
+      } else {} //TODO: handle
     }
 
     return { docs: _.flatten(docs), terms: terms };
