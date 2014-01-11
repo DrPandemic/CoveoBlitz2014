@@ -66,7 +66,7 @@ function Search() {
       });
     }
 
-    _.each(get_fields(), function(field) {
+    /*_.each(get_fields(), function(field) {
       var val = (!doc[field] || _.isArray(doc[field])) ? doc[field] : [doc[field]];
       if (val) {
         _.each(val, function(v) {
@@ -83,7 +83,7 @@ function Search() {
           }
         });
       }
-    });
+    });*/
 
     save_doc(id, doc, type, doc_terms);
     if (callback) callback();
@@ -123,8 +123,8 @@ function Search() {
 
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
     var terms = filtered.terms;
-    filtered = facets_filter(filtered.docs, query.facetFilters);
-    var mydocs = filtered;
+    //filtered = facets_filter(filtered.docs, query.facetFilters);
+    var mydocs = filtered.docs;
 
     mydocs = rank(terms, mydocs);
 
