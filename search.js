@@ -67,11 +67,18 @@ function Search() {
     }
 
     _.each(get_fields(), function(field) {
-      if (!self.facets[field]) { // first time we see this field
-        filter[field] = {};
-        filter[field][id] = 1;
-      } else if (!self.facets[field][id]) {
-        filter[field][id] = 1;
+      var val = doc[field];
+      if (val) {
+        if (!self.facets[field]) { // first time we see this field
+          self.facets[field] = {};
+          self.facets[field][val] = {};
+          self.facets[field][val][id] = 1;
+        } else if (!self.facets[field][val]) { // first time we see this field value
+          self.facets[field][val] = {};
+          self.facets[field][val][id] = 1;
+        } else {
+          self.facets[field][val][id] = 1;
+        }
       }
     });
 
@@ -87,11 +94,12 @@ function Search() {
     var text = doc.text || '';
     _.each(get_fields(),
     function(field) {
-      if (doc[field]) 
+      if (doc[field]) {
         text += ' ' + 
-          _.isArray(doc[field]) ? 
-            _.reduce(doc[field], function(memo, f) { return memo + ' ' + f; }, '') : 
-            doc[field];
+          (_.isArray(doc[field]) ?
+            _.reduce(doc[field], function(memo, f) { return memo + ' ' + f; }, '') :
+            doc[field]);
+      }
     });
     return text;
   }
@@ -111,8 +119,8 @@ function Search() {
     //console.log('Query',query);
 
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
-    //filtered = facets_filter(filtered.docs, query.facetFilters);
-    var mydocs = filtered.docs;
+    filtered = facets_filter(filtered.docs, query.facetFilters);
+    var mydocs = filtered;
 
     mydocs.sort();
 
@@ -246,7 +254,7 @@ function Search() {
               return self.dic[t] ? _.keys(self.dic[t].postings) : [];
             });
             var potential = intersectLists(docsw);
-
+            return { docs: potential, terms: terms };
             //self.dic[term].postings[idDoc].positions = array pas sorted
           }
         }
@@ -262,17 +270,19 @@ function Search() {
     _.each(docs, function(doc) {
       var keep = true;
       _.each(filters, function(filter) {
-        if (!self.facets[filter.metadataName]) keep = false;
+        if (!self.facets[filter.metadataName]) { keep = false;  }
         if (keep) {
           var filterok = false;
           _.each(filter.values, function(val) {
-            if (self.facets[filter.metadataName][val]) filterok = true;
+            if (self.facets[filter.metadataName][val] &&
+              self.facets[filter.metadataName][val][doc]) filterok = true;
           });
           if (!filterok) keep = false;
         }
       });
 
       if (keep) {
+        //console.log('yes');
         remaining.push(doc);
       }
     });

@@ -9,13 +9,14 @@
       'chat',
       'chien'
     ],
-  currentId = 1;
+  currentId = 0;
 
 start_test();
 
 function start_test() {
+  var names = ['rock', 'rock', '', '', '', '']
   for(var doc in docs) {
-    search.index(fakeAlbum(docs[doc]),'album',function() {
+    search.index(fakeAlbum(docs[doc], names[doc]),'album',function() {
       console.log('indexed');
     })
   }
@@ -31,11 +32,11 @@ function getInput(str) {
   console.log('results',JSON.stringify(search.query(fakeQueryMulty(str,1,[{metadataName:'name', values:['rock']}]))));
 }
 
-function fakeAlbum(doc){
+function fakeAlbum(doc, name){
   return {
     id:currentId++,
     text: doc,
-    name : 'rock',
+    name : name,
     artists : [],
     release_date : '',
     genres: ['rock'],
