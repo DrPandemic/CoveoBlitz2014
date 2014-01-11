@@ -111,8 +111,8 @@ function Search() {
     //console.log('Query',query);
 
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
-    filtered = facets_filter(filtered.docs, query.facetFilters);
-    var mydocs = filtered;
+    //filtered = facets_filter(filtered.docs, query.facetFilters);
+    var mydocs = filtered.docs;
 
     mydocs.sort();
 
