@@ -163,13 +163,12 @@ function Search() {
 
     var results = [];
     _.each(facets, function(values, meta) {
-      values.sort(function(a,b) { return b.count - a.count; });
       results.push(new ttypes.FacetResult({
         metadataName: meta,
         values: _.map(values, function(count, value) {
           if (meta === 'type') value = (value == 1) ? 'artist' : 'album';
           return new ttypes.FacetValue({ value: value, count: count});
-        })
+        }).sort(function(a,b) { return b.count - a.count; })
       }));
     });
     return results;
