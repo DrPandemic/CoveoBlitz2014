@@ -162,7 +162,7 @@ function Search() {
   }
 
 
-  function filter(rootID,tree) {
+  /*function filter(rootID,tree) {
     var terms = [];
     var docs = [];
     var tag = tree[0].value;
@@ -177,10 +177,10 @@ function Search() {
     }
 
     return { docs: _.flatten(docs), terms: terms };
-  }
+  }*/
 
 
-  function filter2(rootID, tree) {
+  function filter(rootID, tree) {
     var terms = [];
     var docs = [];
     var tag = tree[0].value;
@@ -191,7 +191,9 @@ function Search() {
       for(var node in tree) {
         //2 = literal
         var value = tree[node].value;
-        if(tree[node].type === 2 && self.dic[value]) {
+        console.log(tree[node].type,self.dic[value]);
+        if(tree[node].type === '2' && self.dic[value]) {
+          console.log('good');
           terms.push(value);
           docs.push(_.keys(self.dic[value].postings));
         }
@@ -207,7 +209,7 @@ function Search() {
 
     var list = lists[0];
     for (var i = 1; i < lists.length; ++i) {
-      list = _.intersect(list, lists[i]);
+      list = _.intersection(list, lists[i]);
     }
     return list;
   }
