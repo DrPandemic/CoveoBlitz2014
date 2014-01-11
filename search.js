@@ -102,7 +102,7 @@ function Search() {
   ]
    */
   function filter(rootID,tree) {
-    var tag = tree[0][0];
+    var tag = tree[0].value;
     if (tag === '*') {
       return self.doc_ids;
     } else {
