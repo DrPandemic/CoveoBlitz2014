@@ -64,17 +64,25 @@ function Search() {
 
         doc_terms.push(terms);
       });
-    } else {
-      //console.log(id + ' has no text.');
     }
+
+    /*_.each(get_fields(), function(field) {
+      if (doc[field]) {
+        
+      }
+    });*/
 
     save_doc(id, doc, type, doc_terms);
     if (callback) callback();
   };
 
+  function get_fields() {
+    return ['name', 'origin', 'active_start', 'active_end', 'genres', 'labels', 'albums', 'group_names', 'instruments_played', 'artists', 'release_date', 'track_names', 'type'];
+  }
+
   function get_text_to_index(doc) {
-    var text = '';
-    _.each(['text', 'name', 'origin', 'active_start', 'active_end', 'genres', 'labels', 'albums', 'group_names', 'instruments_played', 'artists', 'release_date', 'track_names', 'type'],
+    var text = doc.text || '';
+    _.each(get_fields(),
     function(field) {
       if (doc[field]) text += ' ' + doc[field];
     });
@@ -133,7 +141,7 @@ function Search() {
     _.each(docs, function(doc) {
       var d = self.docs[doc].doc;
       _.each(
-      ['name', 'origin', 'active_start', 'active_end', 'genres', 'labels', 'albums', 'group_names', 'instruments_played', 'artists', 'release_date', 'track_names', 'type'],
+      get_fields(),
       function (field) {
         var value = d[field];
         if (value) {
@@ -155,6 +163,7 @@ function Search() {
 
     var results = [];
     _.each(facets, function(values, meta) {
+      values.sort(function(a,b) { return b.count - a.count; });
       results.push(new ttypes.FacetResult({
         metadataName: meta,
         values: _.map(values, function(count, value) {
@@ -167,7 +176,6 @@ function Search() {
   }
 
   this.reset = function() {
-    //console.log('Reset.');
     this.dic = {};
     this.docs = {};
     this.doc_ids = [];
