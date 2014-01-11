@@ -46,8 +46,8 @@ function Search() {
               nb_docs: 1
             };
             self.dic[term].postings[id] = {
-              frequency: 1,
-              postitions: null//TODO: [i]
+              frequency: 1/*,
+              postitions: null//TODO: [i]*/
             };
           } else if (!self.dic[term].postings[id]) { // first time we see this term in this doc
             self.dic[term].postings[id] = {
@@ -96,6 +96,8 @@ function Search() {
 
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
     var mydocs = filtered.docs;
+
+    mydocs.sort();
 
     return {
       results: _.map(mydocs, function(doc) {
@@ -164,6 +166,7 @@ function Search() {
   }
 
   this.reset = function() {
+    console.log('Reset.');
     this.dic = {};
     this.docs = {};
     this.doc_ids = [];
