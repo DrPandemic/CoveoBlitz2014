@@ -174,6 +174,9 @@ function Search() {
 
   function extract_terms(str,callback) {
     if (callback) callback(tokenizer.extract_terms(str));
+    else {
+      return tokenizer.extract_terms(str);
+    }
   }
 
 
@@ -213,13 +216,21 @@ function Search() {
       } else {
         var queryTerms = [];
         for(var node in tree) {
-          //2 = literal
           var value = tree[node].value;
+          var termsS = extract_terms(value);
+          //2 = literal
           //////console.log(tree[node].type,self.dic[value]);
-          if(tree[node].type === '2' && self.dic[value]) {
+          if(tree[node].type === '2' && self.dic[value] && termsS.length === 1) {
             ////console.log('good');
             terms.push(value);
             docs.push(_.keys(self.dic[value].postings));
+          } else if (tree[node].type === '2') {
+            var docsw = _.map(termsS, function(t) {
+              return self.dic[t] ? _.keys(self.dic[t].postings) : [];
+            });
+            var potential = intersectLists(docsw);
+
+
           }
         }
         docs = intersectLists(docs);

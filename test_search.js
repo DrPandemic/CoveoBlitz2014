@@ -5,7 +5,9 @@
   'chat chat chat Explosion'
   , 'chien chien chat chien chien chien chien tentacules'
   , 'chien chat tentacules'
-  , 'Mais Jesse que devrions nous faire?'
+  , 'Mais Jesse que devrions nous faire?',
+      'chat',
+      'chien'
     ],
   currentId = 1;
 
