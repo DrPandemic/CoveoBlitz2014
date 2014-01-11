@@ -122,10 +122,11 @@ function Search() {
     //console.log('Query',query);
 
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
+    var terms = filtered.terms;
     filtered = facets_filter(filtered.docs, query.facetFilters);
     var mydocs = filtered;
 
-    mydocs.sort();
+    mydocs = rank(terms, mydocs);
 
     return {
       results: _.map(mydocs, function(doc) {
@@ -209,7 +210,34 @@ function Search() {
 
 
   function rank(query, docs) {
-    var scores = [];
+    if (query.length == 1 && query[0] == '*')
+      return docs.sort(function(a,b) { return self.docs[a].id < self.docs[b].id ? -1 : 1; });
+
+    var log10 = Math.log(10);
+    var idf = {};
+    _.each(query, function(term) {
+      idf[term] = self.dic[term] ?
+        Math.log(self.doc_ids.length / (self.dic[term].nb_docs + 1)) :
+        0;
+    });
+    var scores = _.map(docs, function(doc) {
+      var score = 0;
+      _.each(query, function (term) {
+        var tf = self.dic[term] ?
+          Math.log(self.dic[term].postings[doc].frequency + 1) / log10 :
+          0;
+        score += tf * idf[term];
+      });
+      return { doc: doc, score: score };
+    });
+
+    scores.sort(function(a,b) {
+      var scoreA = a.score;
+      var scoreB = b.score;
+      return scoreA != scoreB ? (scoreB - scoreA) : (a.doc.id < b.doc.id ? -1 : 1);
+    });
+
+    return _.map(scores, function(s) { return s.doc; });
   }
 
 
