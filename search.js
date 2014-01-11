@@ -22,6 +22,18 @@ function Search() {
   function extract_terms(str,callback) {
     callback(tokenizer.extract_terms(str));
   }
+
+  /*
+  return :
+  [
+    id:The good documents
+  ]
+   */
+  function filter(rootID,tree) {
+    var tag = tree[0][0];
+    //if (tag === '*')
+  }
+
 }
 
 module.exports = Search;
