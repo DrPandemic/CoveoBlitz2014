@@ -203,6 +203,7 @@ function Search() {
     var tag = tree[0].value;
     if (tag === '*') {
       docs = self.doc_ids;
+      return { docs: _.flatten(docs), terms: terms };
     } else {
       if(tree.length == 1) {
         return filter1(rootID,tree);
