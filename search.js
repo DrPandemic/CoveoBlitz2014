@@ -91,6 +91,22 @@ function Search() {
   function extract_terms(str,callback) {
     if (callback) callback(tokenizer.extract_terms(str));
   }
+
+  /*
+  return :
+  [
+    id:The good documents
+  ]
+   */
+  function filter(rootID,tree) {
+    var tag = tree[0][0];
+    if (tag === '*') {
+      return self.doc_ids;
+    } else {
+      return self.dic[tag] ? _.keys(self.dic[tag].postings) : [];
+    }
+  }
+
 }
 
 module.exports = Search;
