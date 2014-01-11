@@ -28,12 +28,13 @@ function Search() {
   this.docs = {};
   this.doc_ids = [];
   var self = this;
+
   this.index = function(doc, type, callback) {
     console.log('Indexing ' + doc.id + '.');
 
     var id = doc.id;
 
-    var text = doc.text;
+    var text = get_text_to_index(doc);
     var doc_terms = [];
 
     if (text) {
@@ -69,6 +70,15 @@ function Search() {
     save_doc(id, doc, type, doc_terms);
     if (callback) callback();
   };
+
+  function get_text_to_index(doc) {
+    var text = '';
+    _.each(['text', 'name', 'origin', 'active_start', 'active_end', 'genres', 'labels', 'albums', 'group_names', 'instruments_played', 'artists', 'release_date', 'track_names', 'type'],
+    function(field) {
+      if (doc[field]) text += ' ' + doc[field];
+    });
+    return text;
+  }
 
   function save_doc(id, doc, type, terms) {
     doc.type = type;
