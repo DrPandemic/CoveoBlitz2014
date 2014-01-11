@@ -31,7 +31,7 @@ function Search() {
   this.facets = {};
 
   this.index = function(doc, type, callback) {
-    console.log('Indexing ' + doc.id + '.');
+    //console.log('Indexing ' + doc.id + '.');
 
     var id = doc.id;
 
@@ -65,7 +65,7 @@ function Search() {
         doc_terms.push(terms);
       });
     } else {
-      console.log(id + ' has no text.');
+      //console.log(id + ' has no text.');
     }
 
     save_doc(id, doc, type, doc_terms);
@@ -93,7 +93,7 @@ function Search() {
   }
 
   this.query = function(query) {
-    console.log('Query',query);
+    //console.log('Query',query);
 
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
     var mydocs = filtered.docs;
@@ -167,7 +167,7 @@ function Search() {
   }
 
   this.reset = function() {
-    console.log('Reset.');
+    //console.log('Reset.');
     this.dic = {};
     this.docs = {};
     this.doc_ids = [];
@@ -208,6 +208,7 @@ function Search() {
     var tag = tree[0].value;
     if (tag === '*') {
       docs = self.doc_ids;
+      return { docs: _.flatten(docs), terms: terms };
     } else {
       if(tree.length == 1) {
         return filter1(rootID,tree);
@@ -216,9 +217,9 @@ function Search() {
         for(var node in tree) {
           //2 = literal
           var value = tree[node].value;
-          console.log(tree[node].type,self.dic[value]);
+          //////console.log(tree[node].type,self.dic[value]);
           if(tree[node].type === '2' && self.dic[value]) {
-            console.log('good');
+            ////console.log('good');
             terms.push(value);
             docs.push(_.keys(self.dic[value].postings));
           }
