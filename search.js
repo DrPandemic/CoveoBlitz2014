@@ -47,18 +47,18 @@ function Search() {
               nb_docs: 1
             };
             self.dic[term].postings[id] = {
-              frequency: 1/*,
-              postitions: null//TODO: [i]*/
+              frequency: 1,
+              postitions: [i]
             };
           } else if (!self.dic[term].postings[id]) { // first time we see this term in this doc
             self.dic[term].postings[id] = {
-              frequency: 1/*,
-              positions: null//TODO: [i]*/
+              frequency: 1,
+              positions: [i]
             };
             self.dic[term].nb_docs++;
           } else {
             self.dic[term].postings[id].frequency++;
-            //TODO: this.dic[term].postings[id].positions.push(i);
+            this.dic[term].postings[id].positions.push(i);
           }
         });
 
@@ -67,8 +67,11 @@ function Search() {
     }
 
     _.each(get_fields(), function(field) {
-      if (doc[field]) { // 
-        
+      if (!doc[field]) { // first time we see this field
+        filter[field] = {};
+        filter[field][id] = 1;
+      } else if (!doc[field][id]) {
+        filter[field][id] = 1;
       }
     });
 
@@ -108,6 +111,7 @@ function Search() {
     //console.log('Query',query);
 
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
+    filtered = facets_filter(filtered, query.facetFilters);
     var mydocs = filtered.docs;
 
     mydocs.sort();
@@ -240,6 +244,27 @@ function Search() {
 
       return { docs: _.flatten(docs), terms: terms };
       }
+  }
+
+  function facets_filter(docs, filters) {
+    var remaining = [];
+    _.each(docs, function(doc) {
+      var keep = true;
+      _.each(filters, function(filter) {
+        if (!self.facets[filter.metadataName]) keep = false;
+        if (keep) {
+          var filterok = false;
+          _.each(filter.values, function(val) {
+            if (self.facets[filter.metadataName][val]) filterok = true;
+          });
+          if (!filterok) keep = false;
+        }
+      });
+
+      if (keep) {
+        remaining.push(doc);
+      }
+    });
   }
 
   function intersectLists(lists) {
