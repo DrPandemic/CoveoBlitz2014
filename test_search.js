@@ -57,5 +57,7 @@ function fakeArtist(doc){
 }
 function fakeQuery(doc,id,facets){
   return {queryTreeNodes:[{value : doc/*,'OPERATOR',-1,-1,1*/}],rootID : id, facetFilters : facets};
-
+}
+function fakeQueryMulty(doc,id,facets) {
+  return {queryTreeNodes:[{value : doc/*,'OPERATOR',-1,-1,1*/}],rootID : id, facetFilters : facets};
 }

@@ -179,6 +179,38 @@ function Search() {
     return { docs: _.flatten(docs), terms: terms };
   }
 
+
+  function filter2(rootID, tree) {
+    var terms = [];
+    var docs = [];
+    var tag = tree[0].value;
+    if (tag === '*') {
+      docs = self.doc_ids;
+    } else {
+      var queryTerms = [];
+      for(var node in tree) {
+        //2 = literal
+        var value = tree[node].value;
+        if(tree[node].type === 2 && self.dic[value]) {
+          terms.push(value);
+          docs.push(_.keys(self.dic[value].postings));
+        }
+      }
+      docs = intersectLists(docs);
+    }
+
+    return { docs: _.flatten(docs), terms: terms };
+  }
+
+  function intersectLists(lists) {
+    if (!lists.length) return [];
+
+    var list = lists[0];
+    for (var i = 1; i < lists.length; ++i) {
+      list = _.intersect(list, lists[i]);
+    }
+    return list;
+  }
 }
 
 module.exports = Search;
