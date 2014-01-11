@@ -56,3 +56,7 @@ function fakeQuery(doc){
   return [[doc,'OPERATOR',-1,-1,1]];
 
 }
+=======
+search.index({id: 1, text: 'Test'}, 'album', function() {
+  console.log(search.query({ rootId: 1, queryTreeNodes: [['*']]}));
+});

@@ -30,45 +30,46 @@ function Search() {
   this.index = function(doc, type, callback) {
     console.log('Indexing.',doc);
 
-    var id = get_doc_id();
+    var id = doc.id;
 
     var text = doc.text;
     var doc_terms = [];
-    extract_terms(text, function (terms) {
-      _.each(terms, function (term, i) {
-        if (!self.dic[term]) { // first time we see this term
-          self.dic[term] = {
-            postings: {},
-            nb_docs: 1
-          };
-          self.dic[term].postings[id] = {
-            frequency: 1,
-            postitions: null//TODO: [i]
-          };
-        } else if (!self.dic[term].postings[id]) { // first time we see this term in this doc
-          self.dic[term].postings[id] = {
-            frequency: 1,
-            positions: null//TODO: [i]
-          };
-          self.dic[term].nb_docs++;
-        } else {
-          self.dic[term].postings[id].frequency++;
-          //TODO: this.dic[term].postings[id].positions.push(i);
-        }
+
+    if (text) {
+      extract_terms(text, function (terms) {
+        _.each(terms, function (term, i) {
+          if (!self.dic[term]) { // first time we see this term
+            self.dic[term] = {
+              postings: {},
+              nb_docs: 1
+            };
+            self.dic[term].postings[id] = {
+              frequency: 1,
+              postitions: null//TODO: [i]
+            };
+          } else if (!self.dic[term].postings[id]) { // first time we see this term in this doc
+            self.dic[term].postings[id] = {
+              frequency: 1,
+              positions: null//TODO: [i]
+            };
+            self.dic[term].nb_docs++;
+          } else {
+            self.dic[term].postings[id].frequency++;
+            //TODO: this.dic[term].postings[id].positions.push(i);
+          }
+        });
+
+        doc_terms.push(terms);
       });
+    }
 
-      doc_terms.push(terms);
-    });
-
-    save_doc(id, doc, doc_terms);
+    save_doc(id, doc, type, doc_terms);
     if (callback) callback();
   };
 
-  var current_doc_id = 1;
-  function get_doc_id() {
-    return current_doc_id++;
-  }
-  function save_doc(id, doc, terms) {
+  function save_doc(id, doc, type, terms) {
+    doc.type = type;
+
     self.docs[id] = {
       doc: doc,
       terms: _.unique(terms)
@@ -77,8 +78,17 @@ function Search() {
     self.doc_ids.push(id);
   }
 
-  this.query = function(rootId, query) {
+  this.query = function(query) {
     console.log('Query');
+ 
+    var docs = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
+
+    return _.map(docs, function(doc) {
+      return {
+        id: doc,
+        type: self.docs[doc].doc.type
+      }
+    });
   };
 
   function extract_terms(str,callback) {
