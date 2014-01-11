@@ -29,7 +29,7 @@ function Search() {
   this.doc_ids = [];
   var self = this;
   this.index = function(doc, type, callback) {
-    console.log('Indexing.');
+    console.log('Indexing ' + doc.id + '.');
 
     var id = doc.id;
 
@@ -50,8 +50,8 @@ function Search() {
             };
           } else if (!self.dic[term].postings[id]) { // first time we see this term in this doc
             self.dic[term].postings[id] = {
-              frequency: 1,
-              positions: null//TODO: [i]
+              frequency: 1/*,
+              positions: null//TODO: [i]*/
             };
             self.dic[term].nb_docs++;
           } else {
@@ -62,6 +62,8 @@ function Search() {
 
         doc_terms.push(terms);
       });
+    } else {
+      console.log(id + ' has no text.');
     }
 
     save_doc(id, doc, type, doc_terms);
