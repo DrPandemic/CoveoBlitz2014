@@ -83,6 +83,7 @@ function Search() {
 
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
     var docs = filtered.docs;
+    console.log(docs);
 
     return _.map(docs, function(doc) {
       return {
