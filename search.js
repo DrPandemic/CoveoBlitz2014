@@ -82,12 +82,7 @@ function Search() {
     console.log('Query',query);
 
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
-<<<<<<< HEAD
     var mydocs = filtered.docs;
-=======
-    var docs = filtered.docs;
-    console.log(docs);
->>>>>>> 4babfe1174dde352acedaf982aed88cbfc7f2661
 
     return _.map(mydocs, function(doc) {
       return {
