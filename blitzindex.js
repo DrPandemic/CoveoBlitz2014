@@ -6,16 +6,21 @@ var ttransport = require('thrift/lib/thrift/transport');
 
 var transport = new ThriftShop.TFramedTransport();
 
-var search = require('./search');
+var Search = require('./search');
+var search = new Search();
 
 var server = ThriftShop.createServer(Indexer, {
 	indexArtist: function (artist, result) {
     console.log(artist);
-    search.index(artist, 'artist');
+    search.index(artist, 'artist', function () {
+      result(null);
+    });
   },
   indexAlbum: function (album, result) {
     console.log(album);
-    search.index(album, 'album');
+    search.index(album, 'album', function () {
+      result(null);
+    });
   },
   reset: function(result) {
     result(null);
@@ -24,9 +29,10 @@ var server = ThriftShop.createServer(Indexer, {
     console.log("ping");
     result(null);
   },
-  QueryResponse: function (query, result) {
+  query: function (query, result) {
     console.log(query);
     search.query(query);
+    result(null);
   }
 }, { transport : ttransport.TBufferedTransport });
 server.listen(9090);
