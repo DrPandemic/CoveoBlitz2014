@@ -34,31 +34,34 @@ function Search() {
 
     var text = doc.text;
     var doc_terms = [];
-    extract_terms(text, function (terms) {
-      _.each(terms, function (term, i) {
-        if (!self.dic[term]) { // first time we see this term
-          self.dic[term] = {
-            postings: {},
-            nb_docs: 1
-          };
-          self.dic[term].postings[id] = {
-            frequency: 1,
-            postitions: null//TODO: [i]
-          };
-        } else if (!self.dic[term].postings[id]) { // first time we see this term in this doc
-          self.dic[term].postings[id] = {
-            frequency: 1,
-            positions: null//TODO: [i]
-          };
-          self.dic[term].nb_docs++;
-        } else {
-          self.dic[term].postings[id].frequency++;
-          //TODO: this.dic[term].postings[id].positions.push(i);
-        }
-      });
 
-      doc_terms.push(terms);
-    });
+    if (text) {
+      extract_terms(text, function (terms) {
+        _.each(terms, function (term, i) {
+          if (!self.dic[term]) { // first time we see this term
+            self.dic[term] = {
+              postings: {},
+              nb_docs: 1
+            };
+            self.dic[term].postings[id] = {
+              frequency: 1,
+              postitions: null//TODO: [i]
+            };
+          } else if (!self.dic[term].postings[id]) { // first time we see this term in this doc
+            self.dic[term].postings[id] = {
+              frequency: 1,
+              positions: null//TODO: [i]
+            };
+            self.dic[term].nb_docs++;
+          } else {
+            self.dic[term].postings[id].frequency++;
+            //TODO: this.dic[term].postings[id].positions.push(i);
+          }
+        });
+
+        doc_terms.push(terms);
+      });
+    }
 
     save_doc(id, doc, type, doc_terms);
     if (callback) callback();
