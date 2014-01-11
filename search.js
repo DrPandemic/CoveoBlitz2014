@@ -58,7 +58,7 @@ function Search() {
             self.dic[term].nb_docs++;
           } else {
             self.dic[term].postings[id].frequency++;
-            this.dic[term].postings[id].positions.push(i);
+            self.dic[term].postings[id].positions.push(i);
           }
         });
 
