@@ -1,4 +1,5 @@
 var _ = require('underscore'),
+    ttypes = require('./document_types'),
     tokenizer = require('./tokenizer.js');
 
 function Search() {
@@ -86,18 +87,63 @@ function Search() {
 
     return {
       results: _.map(mydocs, function(doc) {
-        return {
+        return new ttypes.QueryResult({
           id: doc,
           documentType: self.docs[doc].doc.type
-        }
+        })
       }),
       facetResults: build_facets_results(mydocs)
     };
   };
 
   function build_facets_results(docs) {
+  /* return:
+  [
+  {
+    metadata: [
+      {value: string,
+      count: int}
+    ]
+  ]
+  */
+
+  /*
+  {
+    metadata: {
+      value: count
+    }
+  }
+  */
     var facets = {};
-    return [];
+    _.each(docs, function(doc) {
+      var d = self.docs[doc];
+      _.each(
+      ['name', 'origin', 'active_start', 'active_end', 'genres', 'labels', 'albums', 'group_names', 'instruments_played', 'artists', 'release_date', 'track_names'],
+      function (field) {
+        var value = d[field];
+        if (value) {
+          if (!facets[field]) { // first time we see this metadata
+            facets[field] = {};
+            facets[field][value] = 1;
+          } else if (!facets[field][value]) { // first time we see this value
+            facets[field][value] = 1;
+          } else {
+            facets[field][value]++;
+          }
+        }
+      });
+    });
+
+    var results = [];
+    _.each(metadata, function(values, meta) {
+      results.push(new ttypes.FacetResult({
+        metadataName: meta,
+        values: _.map(values, function(count, value) {
+          return new ttypes.FacetValue({ value: value, count: count});
+        })
+      }));
+    });
+    return results;
   }
 
   this.reset = function() {
