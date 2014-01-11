@@ -30,7 +30,7 @@ function Search() {
   this.index = function(doc, type, callback) {
     console.log('Indexing.');
 
-    var id = get_doc_id();
+    var id = doc.id;
 
     var text = doc.text;
     var doc_terms = [];
@@ -60,15 +60,13 @@ function Search() {
       doc_terms.push(terms);
     });
 
-    save_doc(id, doc, doc_terms);
+    save_doc(id, doc, type, doc_terms);
     if (callback) callback();
   };
 
-  var current_doc_id = 1;
-  function get_doc_id() {
-    return current_doc_id++;
-  }
-  function save_doc(id, doc, terms) {
+  function save_doc(id, doc, type, terms) {
+    doc.type = type;
+
     self.docs[id] = {
       doc: doc,
       terms: _.unique(terms)
@@ -79,6 +77,15 @@ function Search() {
 
   this.query = function(rootId, query) {
     console.log('Query');
+ 
+    var docs = self.doc_ids; // TODO: filter
+
+    return _.map(docs, function(doc) {
+      return {
+        id: doc,
+        type: self.docs[doc].doc.type
+      }
+    });
   };
 
   function extract_terms(str,callback) {
