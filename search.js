@@ -82,9 +82,9 @@ function Search() {
     console.log('Query',query);
  
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
-    var docs = filtered.docs;
+    var mydocs = filtered.docs;
 
-    return _.map(docs, function(doc) {
+    return _.map(mydocs, function(doc) {
       return {
         id: doc,
         documentType: self.docs[doc].doc.type
@@ -92,7 +92,14 @@ function Search() {
     });
   };
 
+  this.reset = function() {
+    this.dic = {};
+    this.docs = {};
+    this.doc_ids = [];
+  }
+
   function extract_terms(str,callback) {
+    console.log(callback);
     if (callback) callback(tokenizer.extract_terms(str));
   }
 
