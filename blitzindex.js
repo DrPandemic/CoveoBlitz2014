@@ -7,32 +7,20 @@ var search = new Search();
 // THRIFT SERVICE
 //
 
-var docs = 0;
-
 var ThriftShop = require('thrift');
 var Indexer = require('./Indexer.js');
 var ttypes = require('./document_types.js');
 var ttransport = require('thrift/lib/thrift/transport');
-12
+
 var server = ThriftShop.createServer(Indexer, {
   indexArtist: function (artist, result) {
     search.index(artist, 1, function () {
       result(null);
-      docs++;
-      if (docs > 40000) {
-        search.reset();
-        docs = 0;
-      }
     });
   },
   indexAlbum: function (album, result) {
     search.index(album, 2, function () {
       result(null);
-      docs++;
-      if (docs > 40000) {
-        search.reset();
-        docs = 0;
-      }
     });
   },
   reset: function(result) {
