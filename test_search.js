@@ -30,7 +30,8 @@ function getInput(str) {
 
 function fakeAlbum(doc){
   return {
-    name : doc,
+    text: doc,
+    name : '',
     artists : [],
     release_date : '',
     genres: [],
@@ -39,7 +40,8 @@ function fakeAlbum(doc){
 }
 function fakeArtist(doc){
   return {
-    name : doc,
+    text : doc,
+    name : '',
     origin : '',
     active_start : '',
     active_end : '',

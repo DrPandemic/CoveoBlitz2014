@@ -82,6 +82,7 @@ function Search() {
     console.log('Query',query);
  
     var docs = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
+    console.log('filter',docs);
 
     return _.map(docs, function(doc) {
       return {
@@ -95,18 +96,11 @@ function Search() {
     if (callback) callback(tokenizer.extract_terms(str));
   }
 
-  /*
-  return :
-  [
-    id:The good documents
-  ]
-   */
   function filter(rootID,tree) {
     var tag = tree[0].value;
     if (tag === '*') {
       return self.doc_ids;
     } else {
-      console.log('filter',self.dic[tag]);
       return self.dic[tag] ? _.keys(self.dic[tag].postings) : [];
     }
   }
