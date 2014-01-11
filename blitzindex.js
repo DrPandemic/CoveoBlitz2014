@@ -7,24 +7,32 @@ var search = new Search();
 // THRIFT SERVICE
 //
 
+var docs = 0;
+
 var ThriftShop = require('thrift');
 var Indexer = require('./Indexer.js');
 var ttypes = require('./document_types.js');
 var ttransport = require('thrift/lib/thrift/transport');
-
+12
 var server = ThriftShop.createServer(Indexer, {
   indexArtist: function (artist, result) {
-    // var s = Date.now();
     search.index(artist, 1, function () {
-      // console.log(Date.now() - s);
       result(null);
+      docs++;
+      if (docs > 40000) {
+        search.reset();
+        docs = 0;
+      }
     });
   },
   indexAlbum: function (album, result) {
-    // var s = Date.now();
     search.index(album, 2, function () {
-      // console.log(Date.now() - s);
       result(null);
+      docs++;
+      if (docs > 40000) {
+        search.reset();
+        docs = 0;
+      }
     });
   },
   reset: function(result) {
@@ -37,11 +45,8 @@ var server = ThriftShop.createServer(Indexer, {
     result(null);
   },
   query: function (query, result) {
-    // console.log(util.inspect(query, false, null));
-    // var s = Date.now();
-    var res = new ttypes.QueryResponse(search.query(query));
-    // console.log(s);
     // console.log(util.inspect(search.dic, false, null));
+    var res = new ttypes.QueryResponse(search.query(query));
     // console.log(util.inspect(res.results, false, null));
     result(null, res);
   }
@@ -104,6 +109,35 @@ server.get('/doc/:id', function (req, res, next) {
   //   }
   // }
   res.send(doc);
+});
+
+server.post('/indexArtist', function (req, res, next) {
+  delete req.body.__isset;
+  console.log(req.body);
+  search.index(req.body, 1, function () {
+    res.send(200);
+  });
+});
+
+server.post('/indexAlbum', function (req, res, next) {
+  delete req.body.__isset;
+  console.log(req.body);
+  search.index(req.body, 2, function () {
+    res.send(200);
+  });
+});
+
+server.post('/query', function (req, res, next) {
+  delete req.body.__isset;
+  console.log(req.body);
+  var res = search.query(req.body);
+  console.log(util.inspect(res.results, false, null));
+  res.send(200, res);
+});
+
+server.get('/reset', function (req, res, next) {
+  search.reset();
+  res.send(200);
 });
 
 server.listen(8080, function () {
