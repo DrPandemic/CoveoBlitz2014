@@ -24,6 +24,10 @@ var server = ThriftShop.createServer(Indexer, {
     console.log("ping");
     result(null);
   },
+  QueryResponse: function (query, result) {
+    console.log(query);
+    search.query(query);
+  }
 }, { transport : ttransport.TBufferedTransport });
 server.listen(9090);
 console.log('Server started!');
