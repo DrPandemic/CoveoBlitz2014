@@ -28,7 +28,7 @@ function Search() {
   this.doc_ids = [];
   var self = this;
   this.index = function(doc, type, callback) {
-    console.log('Indexing.',doc);
+    console.log('Indexing.');
 
     var id = doc.id;
 
@@ -79,7 +79,7 @@ function Search() {
   }
 
   this.query = function(query) {
-    console.log('Query');
+    console.log('Query',query);
  
     var docs = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
 

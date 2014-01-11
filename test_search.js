@@ -8,9 +8,6 @@
   , 'Mais Jesse que devrions nous faire?'
 ];
 
-search.index({text: 'Test'});
-search.query('yolo');
-
 start_test();
 
 function start_test() {
@@ -53,10 +50,9 @@ function fakeArtist(doc){
   }
 }
 function fakeQuery(doc){
-  return [[doc,'OPERATOR',-1,-1,1]];
+  return [{value : doc/*,'OPERATOR',-1,-1,1*/}];
 
 }
-=======
 search.index({id: 1, text: 'Test'}, 'album', function() {
   console.log(search.query({ rootId: 1, queryTreeNodes: [['*']]}));
 });
