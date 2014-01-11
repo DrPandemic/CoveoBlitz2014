@@ -81,13 +81,14 @@ function Search() {
   this.query = function(query) {
     console.log('Query',query);
  
-    var docs = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
-    console.log('filter',docs);
+
+    var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
+    var docs = filtered.docs;
 
     return _.map(docs, function(doc) {
       return {
         id: doc,
-        type: self.docs[doc].doc.type
+        documentType: self.docs[doc].doc.type
       }
     });
   };
@@ -96,13 +97,27 @@ function Search() {
     if (callback) callback(tokenizer.extract_terms(str));
   }
 
+
+  function rank(query, docs) {
+    var scores = [];
+  }
+
+
   function filter(rootID,tree) {
+    var terms = [];
+    var docs = [];
     var tag = tree[0].value;
     if (tag === '*') {
-      return self.doc_ids;
+      docs = self.doc_ids;
     } else {
-      return self.dic[tag] ? _.keys(self.dic[tag].postings) : [];
+
+      if (self.dic[tag]) {
+        terms.push(tag);
+        docs.push(_.keys(self.dic[tag].postings));
+      } else {} //TODO: handle 
     }
+
+    return { docs: docs, terms: terms };
   }
 
 }
