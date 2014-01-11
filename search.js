@@ -84,13 +84,21 @@ function Search() {
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
     var mydocs = filtered.docs;
 
-    return _.map(mydocs, function(doc) {
-      return {
-        id: doc,
-        documentType: self.docs[doc].doc.type
-      }
-    });
+    return {
+      results: _.map(mydocs, function(doc) {
+        return {
+          id: doc,
+          documentType: self.docs[doc].doc.type
+        }
+      }),
+      facetResults: build_facets_results(mydocs)
+    };
   };
+
+  function build_facets_results(docs) {
+    var facets = {};
+    return [];
+  }
 
   this.reset = function() {
     this.dic = {};
