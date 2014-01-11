@@ -24,7 +24,8 @@
     }
   ],
   "dependencies": {
-    "thrift": "~0.9.1"
+    "thrift": "~0.9.1",
+    "underscore": "~1.5.2"
   },
   "devDependencies": {},
   "engines": {
@@ -32,4 +33,3 @@
     "npm": ">=1.0.0"
   }
 }
-
