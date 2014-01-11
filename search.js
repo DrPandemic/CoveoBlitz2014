@@ -135,7 +135,7 @@ function Search() {
     });
 
     var results = [];
-    _.each(metadata, function(values, meta) {
+    _.each(facets, function(values, meta) {
       results.push(new ttypes.FacetResult({
         metadataName: meta,
         values: _.map(values, function(count, value) {
