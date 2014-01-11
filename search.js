@@ -172,7 +172,7 @@ function Search() {
 
       if (self.dic[tag]) {
         terms.push(tag);
-        docs = docs.concat(docs, _.keys(self.dic[tag].postings);
+        docs = docs.concat(docs, _.keys(self.dic[tag].postings));
       } else {} //TODO: handle 
     }
 
