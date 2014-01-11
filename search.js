@@ -153,7 +153,6 @@ function Search() {
   }
 
   function extract_terms(str,callback) {
-    console.log(callback);
     if (callback) callback(tokenizer.extract_terms(str));
   }
 

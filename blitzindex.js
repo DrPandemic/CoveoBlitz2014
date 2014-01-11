@@ -21,6 +21,7 @@ var server = ThriftShop.createServer(Indexer, {
     });
   },
   reset: function(result) {
+    search.reset();
     result(null);
   },
   ping: function(result) {
@@ -28,12 +29,11 @@ var server = ThriftShop.createServer(Indexer, {
     result(null);
   },
   query: function (query, result) {
-    console.log(query);
-    var res = search.query(query) || [];
-    for (var i in res) {
-      res[i] = new ttypes.QueryResult(res[i]);
+    var res = search.query(query) || { results: [], facets: [] };
+    for (var i in res.results) {
+      res.results[i] = new ttypes.QueryResult(res.results[i]);
     }
-    var res = new ttypes.QueryResponse({ results: res, facets: [] });
+    var res = new ttypes.QueryResponse(res);
     console.log(res);
     result(null, res);
   }
