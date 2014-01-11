@@ -116,7 +116,7 @@ function Search() {
   */
     var facets = {};
     _.each(docs, function(doc) {
-      var d = self.docs[doc];
+      var d = self.docs[doc].doc;
       _.each(
       ['name', 'origin', 'active_start', 'active_end', 'genres', 'labels', 'albums', 'group_names', 'instruments_played', 'artists', 'release_date', 'track_names'],
       function (field) {
