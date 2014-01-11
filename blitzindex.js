@@ -43,6 +43,7 @@ var server = ThriftShop.createServer(Indexer, {
 server.listen(9090);
 console.log('Server started!');
 
+
 //
 // FRONTEND REST API
 //
@@ -69,14 +70,14 @@ server.get('/search', function (req, res, next) {
   var docs = [];
   for (var i in results.results) {
     var doc = search.docs[results.results[i].id].doc;
-    if (doc.artist && doc.artists.length) {
+    if (doc.artists && doc.artists.length) {
       for (var j in doc.artists) {
-        doc.artists[j] = search.docs[doc.artists[j].id].doc;
+        if (search.docs[doc.artists[j].id]) doc.artists[j] = search.docs[doc.artists[j].id].doc;
       }
     }
-    if (doc.album && doc.albums.length) {
+    if (doc.albums && doc.albums.length) {
       for (var j in doc.albums) {
-        doc.albums[j] = search.docs[doc.albums[j].id].doc;
+        if (search.docs[doc.albums[j].id]) doc.albums[j] = search.docs[doc.albums[j].id].doc;
       }
     }
     docs.push(doc);
@@ -86,14 +87,14 @@ server.get('/search', function (req, res, next) {
 
 server.get('/doc/:id', function (req, res, next) {
   var doc = search.docs[req.params.id].doc;
-  if (doc.artist && doc.artists.length) {
+  if (doc.artists && doc.artists.length) {
     for (var j in doc.artists) {
-      doc.artists[j] = search.docs[doc.artists[j].id].doc;
+      if (search.docs[doc.artists[j]]) doc.artists[j] = search.docs[doc.artists[j]].doc;
     }
   }
-  if (doc.album && doc.albums.length) {
+  if (doc.albums && doc.albums.length) {
     for (var j in doc.albums) {
-      doc.albums[j] = search.docs[doc.albums[j].id].doc;
+      if (search.docs[doc.albums[j]]) doc.albums[j] = search.docs[doc.albums[j]].doc;
     }
   }
   res.send(doc);
