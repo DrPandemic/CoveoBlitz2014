@@ -28,6 +28,7 @@ function Search() {
   this.docs = {};
   this.doc_ids = [];
   var self = this;
+  this.facets = {};
 
   this.index = function(doc, type, callback) {
     //console.log('Indexing ' + doc.id + '.');
@@ -46,36 +47,51 @@ function Search() {
               nb_docs: 1
             };
             self.dic[term].postings[id] = {
-              frequency: 1/*,
-              postitions: null//TODO: [i]*/
+              frequency: 1,
+              postitions: [i]
             };
           } else if (!self.dic[term].postings[id]) { // first time we see this term in this doc
             self.dic[term].postings[id] = {
-              frequency: 1/*,
-              positions: null//TODO: [i]*/
+              frequency: 1,
+              positions: [i]
             };
             self.dic[term].nb_docs++;
           } else {
             self.dic[term].postings[id].frequency++;
-            //TODO: this.dic[term].postings[id].positions.push(i);
+            this.dic[term].postings[id].positions.push(i);
           }
         });
 
         doc_terms.push(terms);
       });
-    } else {
-      //console.log(id + ' has no text.');
     }
+
+    _.each(get_fields(), function(field) {
+      if (!doc[field]) { // first time we see this field
+        filter[field] = {};
+        filter[field][id] = 1;
+      } else if (!doc[field][id]) {
+        filter[field][id] = 1;
+      }
+    });
 
     save_doc(id, doc, type, doc_terms);
     if (callback) callback();
   };
 
+  function get_fields() {
+    return ['name', 'origin', 'active_start', 'active_end', 'genres', 'labels', 'albums', 'group_names', 'instruments_played', 'artists', 'release_date', 'track_names', 'type'];
+  }
+
   function get_text_to_index(doc) {
-    var text = '';
-    _.each(['text', 'name', 'origin', 'active_start', 'active_end', 'genres', 'labels', 'albums', 'group_names', 'instruments_played', 'artists', 'release_date', 'track_names', 'type'],
+    var text = doc.text || '';
+    _.each(get_fields(),
     function(field) {
-      if (doc[field]) text += ' ' + doc[field];
+      if (doc[field]) 
+        text += ' ' + 
+          _.isArray(doc[field]) ? 
+            _.reduce(doc[field], function(memo, f) { return memo + ' ' + f; }, '') : 
+            doc[field];
     });
     return text;
   }
@@ -95,6 +111,7 @@ function Search() {
     //console.log('Query',query);
 
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
+    filtered = facets_filter(filtered, query.facetFilters);
     var mydocs = filtered.docs;
 
     mydocs.sort();
@@ -132,7 +149,7 @@ function Search() {
     _.each(docs, function(doc) {
       var d = self.docs[doc].doc;
       _.each(
-      ['name', 'origin', 'active_start', 'active_end', 'genres', 'labels', 'albums', 'group_names', 'instruments_played', 'artists', 'release_date', 'track_names', 'type'],
+      get_fields(),
       function (field) {
         var value = d[field];
         if (value) {
@@ -159,17 +176,17 @@ function Search() {
         values: _.map(values, function(count, value) {
           if (meta === 'type') value = (value == 1) ? 'artist' : 'album';
           return new ttypes.FacetValue({ value: value, count: count});
-        })
+        }).sort(function(a,b) { return b.count - a.count; })
       }));
     });
     return results;
   }
 
   this.reset = function() {
-    //console.log('Reset.');
     this.dic = {};
     this.docs = {};
     this.doc_ids = [];
+    this.facets = {};
   }
 
   function extract_terms(str,callback) {
@@ -238,6 +255,27 @@ function Search() {
 
       return { docs: _.flatten(docs), terms: terms };
       }
+  }
+
+  function facets_filter(docs, filters) {
+    var remaining = [];
+    _.each(docs, function(doc) {
+      var keep = true;
+      _.each(filters, function(filter) {
+        if (!self.facets[filter.metadataName]) keep = false;
+        if (keep) {
+          var filterok = false;
+          _.each(filter.values, function(val) {
+            if (self.facets[filter.metadataName][val]) filterok = true;
+          });
+          if (!filterok) keep = false;
+        }
+      });
+
+      if (keep) {
+        remaining.push(doc);
+      }
+    });
   }
 
   function intersectLists(lists) {
