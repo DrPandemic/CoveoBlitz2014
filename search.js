@@ -28,7 +28,7 @@ function Search() {
   this.doc_ids = [];
   var self = this;
   this.index = function(doc, type, callback) {
-    console.log('Indexing.');
+    console.log('Indexing.',doc);
 
     var id = get_doc_id();
 
