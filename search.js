@@ -92,7 +92,7 @@ function Search() {
           documentType: self.docs[doc].doc.type
         })
       }),
-      facetResults: build_facets_results(mydocs)
+      facets: build_facets_results(mydocs)
     };
   };
 
