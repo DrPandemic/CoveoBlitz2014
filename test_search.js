@@ -6,7 +6,8 @@
   , 'chien chien chat chien chien chien chien tentacules'
   , 'chien chat tentacules'
   , 'Mais Jesse que devrions nous faire?'
-];
+    ],
+  currentId = 1;
 
 start_test();
 
@@ -30,6 +31,7 @@ function getInput(str) {
 
 function fakeAlbum(doc){
   return {
+    id:currentId++,
     text: doc,
     name : '',
     artists : [],
@@ -40,6 +42,7 @@ function fakeAlbum(doc){
 }
 function fakeArtist(doc){
   return {
+    id:currentId++,
     text : doc,
     name : '',
     origin : '',
