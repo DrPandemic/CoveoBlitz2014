@@ -35,7 +35,7 @@ var server = ThriftShop.createServer(Indexer, {
   },
   query: function (query, result) {
     var res = new ttypes.QueryResponse(search.query(query));
-    console.log(util.inspect(search.dic, false, null));
+    //console.log(util.inspect(search.dic, false, null));
     console.log(util.inspect(res, false, null));
     result(null, res);
   }
@@ -82,6 +82,21 @@ server.get('/search', function (req, res, next) {
     docs.push(doc);
   }
   res.send(docs);
+});
+
+server.get('/doc/:id', function (req, res, next) {
+  var doc = search.docs[req.params.id].doc;
+  if (doc.artist && doc.artists.length) {
+    for (var j in doc.artists) {
+      doc.artists[j] = search.docs[doc.artists[j].id].doc;
+    }
+  }
+  if (doc.album && doc.albums.length) {
+    for (var j in doc.albums) {
+      doc.albums[j] = search.docs[doc.albums[j].id].doc;
+    }
+  }
+  res.send(doc);
 });
 
 server.listen(8080, function () {
