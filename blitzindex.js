@@ -11,16 +11,21 @@ var search = new Search();
 
 var server = ThriftShop.createServer(Indexer, {
   indexArtist: function (artist, result) {
+    var s = Date.now()
     search.index(artist, 1, function () {
+      console.log(Date.now() - s);
       result(null);
     });
   },
   indexAlbum: function (album, result) {
+    var s = Date.now()
     search.index(album, 2, function () {
+      console.log(Date.now() - s);
       result(null);
     });
   },
   reset: function(result) {
+    search.reset();
     result(null);
   },
   ping: function(result) {
@@ -28,7 +33,6 @@ var server = ThriftShop.createServer(Indexer, {
     result(null);
   },
   query: function (query, result) {
-    console.log(query);
     var res = search.query(query) || [];
     for (var i in res) {
       res[i] = new ttypes.QueryResult(res[i]);
