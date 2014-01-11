@@ -80,7 +80,7 @@ function Search() {
 
   this.query = function(query) {
     console.log('Query',query);
- 
+
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
     var mydocs = filtered.docs;
 
@@ -126,7 +126,7 @@ function Search() {
       } else {} //TODO: handle operators
     }
 
-    return { docs: docs, terms: terms };
+    return { docs: _.flatten(docs), terms: terms };
   }
 
 }
