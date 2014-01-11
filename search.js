@@ -48,7 +48,7 @@ function Search() {
             };
             self.dic[term].postings[id] = {
               frequency: 1,
-              postitions: [i]
+              positions: [i]
             };
           } else if (!self.dic[term].postings[id]) { // first time we see this term in this doc
             self.dic[term].postings[id] = {
@@ -114,7 +114,7 @@ function Search() {
     filtered = facets_filter(filtered, query.facetFilters);
     var mydocs = filtered.docs;
 
-    mydocs.sort();
+    mydocs = rank(mydocs);
 
     return {
       results: _.map(mydocs, function(doc) {
