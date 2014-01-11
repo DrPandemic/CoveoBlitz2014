@@ -10,14 +10,12 @@ var Search = require('./search');
 var search = new Search();
 
 var server = ThriftShop.createServer(Indexer, {
-	indexArtist: function (artist, result) {
-    console.log(artist);
+  indexArtist: function (artist, result) {
     search.index(artist, 1, function () {
       result(null);
     });
   },
   indexAlbum: function (album, result) {
-    console.log(album);
     search.index(album, 2, function () {
       result(null);
     });
