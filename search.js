@@ -47,18 +47,18 @@ function Search() {
               nb_docs: 1
             };
             self.dic[term].postings[id] = {
-              frequency: 1,
-              positions: [i]
+              frequency: 1//,
+              //positions: [i]
             };
           } else if (!self.dic[term].postings[id]) { // first time we see this term in this doc
             self.dic[term].postings[id] = {
-              frequency: 1,
-              positions: [i]
+              frequency: 1//,
+              //positions: [i]
             };
             self.dic[term].nb_docs++;
           } else {
             self.dic[term].postings[id].frequency++;
-            self.dic[term].postings[id].positions.push(i);
+            //self.dic[term].postings[id].positions.push(i);
           }
         });
 
@@ -111,8 +111,8 @@ function Search() {
     //console.log('Query',query);
 
     var filtered = filter(query.rootID, query.queryTreeNodes, query.facetFilters);
-    //filtered = facets_filter(filtered.docs, query.facetFilters);
-    var mydocs = filtered.docs;
+    filtered = facets_filter(filtered.docs, query.facetFilters);
+    var mydocs = filtered;
 
     mydocs.sort();
 
@@ -247,7 +247,7 @@ function Search() {
             });
             var potential = intersectLists(docsw);
 
-
+            //self.dic[term].postings[idDoc].positions = array pas sorted
           }
         }
         docs = intersectLists(docs);
