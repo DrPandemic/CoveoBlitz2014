@@ -118,18 +118,22 @@ function Search() {
     _.each(docs, function(doc) {
       var d = self.docs[doc].doc;
       _.each(
-      ['name', 'origin', 'active_start', 'active_end', 'genres', 'labels', 'albums', 'group_names', 'instruments_played', 'artists', 'release_date', 'track_names'],
+      ['name', 'origin', 'active_start', 'active_end', 'genres', 'labels', 'albums', 'group_names', 'instruments_played', 'artists', 'release_date', 'track_names', 'type'],
       function (field) {
         var value = d[field];
         if (value) {
-          if (!facets[field]) { // first time we see this metadata
-            facets[field] = {};
-            facets[field][value] = 1;
-          } else if (!facets[field][value]) { // first time we see this value
-            facets[field][value] = 1;
-          } else {
-            facets[field][value]++;
-          }
+          var values = _.isArray(value) ? _.flatten(value) : [value];
+          _.each(values, function(val) {
+            if (_.isString(val)) val = val.trim();
+            if (!facets[field]) { // first time we see this metadata
+              facets[field] = {};
+              facets[field][val] = 1;
+            } else if (!facets[field][val]) { // first time we see this value
+              facets[field][val] = 1;
+            } else {
+              facets[field][val]++;
+            }
+          });
         }
       });
     });
@@ -139,6 +143,7 @@ function Search() {
       results.push(new ttypes.FacetResult({
         metadataName: meta,
         values: _.map(values, function(count, value) {
+          if (meta === 'type') value = (value == 1) ? 'artist' : 'album';
           return new ttypes.FacetValue({ value: value, count: count});
         })
       }));
@@ -172,7 +177,7 @@ function Search() {
 
       if (self.dic[tag]) {
         terms.push(tag);
-        docs.push(_.keys(self.dic[tag].postings));
+        docs = docs.concat(docs, _.keys(self.dic[tag].postings));
       } else {} //TODO: handle 
     }
 

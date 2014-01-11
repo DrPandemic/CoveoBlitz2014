@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "dependencies": {
     "thrift": "~0.9.1",
-    "underscore": "~1.5.2"
+    "underscore": "~1.5.2",
+    "restify": "~2.6.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
